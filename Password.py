@@ -8,31 +8,19 @@ from rdoclient import RandomOrgClient
 import validators
 
 
-
-
-# Returns a boolean value based on if a generated password is valid
-def Valid_Password(password):
+# Returns a list of integers
+def Valid_Password():
     # A password is valid if it contains at least one upper case letter,
     # one lower case letter, one number, and one special characters
-    upper_case = False
-    lower_case = False
-    number = False
-    special = False
+    API_KEY = "1b4847da-504e-49b4-8256-797d1338de64"
+    r = RandomOrgClient(API_KEY)
+    random_ints = []
+    random_ints.append(r.generate_integers(1, 65, 90))  # Upper case letter
+    random_ints.append(r.generate_integers(1, 97, 122))  # Lower case letter
+    random_ints.append(r.generate_integers(1, 48, 57))  # Number
+    random_ints.append(r.generate_integers(1, 33, 47))  # Special character
 
-    for char in password:
-        if char <= 90 and char >= 65:
-            upper_case = True
-        if char >= 97 and char <= 122:
-            lower_case = True
-        if char >= 48 and char <= 57:
-            number = True
-        if char >= 33 and char <= 64:
-            number = True
-
-    if upper_case and lower_case and number and special:
-        return True
-    else:
-        return False
+    return random_ints
 
 
 def Create_Password():
@@ -91,8 +79,13 @@ def Create_Password():
             valid_length = True
 
     r = RandomOrgClient(API_KEY)
-    # Generates a PASSWORD_LENGTH number of random integers from 33 to 126
-    random_ints = r.generate_integers(password_length, 33, 126)
+    # Generates (PASSWORD_LENGTH - 4) random integers from 33 to 126
+    random_ints = r.generate_integers(int(password_length) - 4, 33, 126)
+
+    special_ints = Valid_Password()
+
+    for num in special_ints:
+        random_ints.append(num[0])
 
     password = ""
 
@@ -119,8 +112,12 @@ def Quick_Create_Password():
     # until one is
 
     # while valid_password is not True:
-    random_ints = r.generate_integers(PASSWORD_LENGTH, 33, 126)
-    valid_password = Valid_Password(random_ints)
+    random_ints = r.generate_integers(PASSWORD_LENGTH - 4, 33, 126)
+
+    special_ints = Valid_Password()
+
+    for num in special_ints:
+        random_ints.append(num[0])
 
     password = ""
 
@@ -145,6 +142,7 @@ def Print_Password():
 
     print()
     print("Here are your passwords:")
+    print()
 
     for row in result:
         print("Website:", row[0])
